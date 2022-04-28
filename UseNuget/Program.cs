@@ -1,4 +1,5 @@
 ﻿using System;
+using SameContentSameName;
 
 namespace UseNuget
 {
@@ -8,5 +9,10 @@ namespace UseNuget
         {
             Console.WriteLine("Hello World!");
         }
+    }
+
+    public partial class A
+    {
+        [SameContentSameName] public string s = "";
     }
 }

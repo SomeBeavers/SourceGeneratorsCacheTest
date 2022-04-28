@@ -4,6 +4,9 @@
 	  <Title>Generator</Title>
 	  <TargetFramework>netstandard2.0</TargetFramework>
 	  <LangVersion>9</LangVersion>
+	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	  <IncludeBuildOutput>false</IncludeBuildOutput>
+	  <Version>1.0.1</Version> <!-- Do not include the generator as a lib dependency -->
   </PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.9.0" PrivateAssets="all" />
@@ -12,5 +15,10 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.9.0" PrivateAssets="all" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Package the generator in the analyzer directory of the nuget package -->
+		<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 	</ItemGroup>
 </Project>

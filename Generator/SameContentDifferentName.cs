@@ -77,7 +77,7 @@ namespace SameContentDifferentName
 
                 Thread.Sleep(10000);
 
-                context.AddSource($"{group.Key.Name}_SameContentDifferentName_{DateTime.Now.ToString("hh_mm_ss")}.cs", SourceText.From(classSource, Encoding.ASCII));
+                context.AddSource($"{group.Key.Name}_SameContentDifferentName_{DateTime.Now:hh_mm_ss}.cs", SourceText.From(classSource, Encoding.ASCII));
                 //context.AddSource("AutoNotifyAttributeNew", SourceText.From(attributeTex2t, Encoding.UTF8));
             }
         }

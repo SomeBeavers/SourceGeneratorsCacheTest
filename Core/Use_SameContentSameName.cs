@@ -6,6 +6,6 @@ namespace Core
     {
         [SameContentSameName] private string daemonClosedFileTyping_Gen_field = "private field text";
         [SameContentSameName] private int t = 1;
-        //[AutoNotify]private int tt = 2;
+        [SameContentSameName] private int t1 = 1;
     }
 }
