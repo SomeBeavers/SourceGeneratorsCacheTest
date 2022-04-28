@@ -50,7 +50,7 @@ namespace Big
             Compilation compilation = context.Compilation.AddSyntaxTrees(CSharpSyntaxTree.ParseText(SourceText.From(attributeText, Encoding.UTF8), options));
 
             // get the newly bound attribute, and INotifyPropertyChanged
-            INamedTypeSymbol attributeSymbol = compilation.GetTypeByMetadataName("DifferentContentSameName.DifferentContentDifferentNameAttribute");
+            INamedTypeSymbol attributeSymbol = compilation.GetTypeByMetadataName("Big.BigAttribute");
             INamedTypeSymbol notifySymbol = compilation.GetTypeByMetadataName("System.ComponentModel.INotifyPropertyChanged");
 
             // loop over the candidate fields, and keep the ones that are actually annotated
