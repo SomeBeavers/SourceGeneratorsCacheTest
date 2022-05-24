@@ -39,6 +39,7 @@ namespace SourceGen
               "}" +
               "\r\n" +
               "#if NETCOREAPP3_1\r\npublic class CoreClass\r\n{\r\n    private int Test()\r\n    {\r\n    }\r\n}\r\n#endif"+
+              "\r\n" +
               "}" +
               "}"
             );

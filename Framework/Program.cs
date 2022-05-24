@@ -13,3 +13,5 @@ namespace Framework
         }
     }
 }
+
+class NoError { }

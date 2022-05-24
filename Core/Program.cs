@@ -10,3 +10,5 @@ namespace Core
         }
     }
 }
+
+class NoError { }

@@ -15,4 +15,8 @@ namespace UseNuget
     {
         [SameContentSameName] public string s = "";
     }
+
+    
 }
+
+class NoError { }

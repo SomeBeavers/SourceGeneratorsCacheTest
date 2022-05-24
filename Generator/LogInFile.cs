@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading;
 
@@ -12,16 +14,16 @@ using Microsoft.CodeAnalysis.Text;
 namespace Generator
 {
     [Generator]
-    public class DifferentContentDifferentName : ISourceGenerator
+    public class LogInFile : ISourceGenerator
     {
         private const string attributeText = @"
 using System;
-namespace DifferentContentDifferentName
+namespace LogInFile
 {
     [AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
-    sealed class DifferentContentDifferentNameAttribute : Attribute
+    sealed class LogInFileAttribute : Attribute
     {
-        public DifferentContentDifferentNameAttribute()
+        public LogInFileAttribute()
         {
         }
         public string PropertyName { get; set; }
@@ -37,6 +39,12 @@ namespace DifferentContentDifferentName
 
         public void Execute(GeneratorExecutionContext context)
         {
+            string path1 = @"C:\ToRemove\Generators\Execute_Log.txt";
+
+            using (StreamWriter w = File.AppendText(path1))
+            {
+                w.WriteLine($"{DateTime.Now:hh_mm_ss}");
+            }
             // add the attribute text
             context.AddSource("AutoNotifyAttribute", SourceText.From(attributeText, Encoding.UTF8));
 
@@ -50,7 +58,7 @@ namespace DifferentContentDifferentName
             Compilation compilation = context.Compilation.AddSyntaxTrees(CSharpSyntaxTree.ParseText(SourceText.From(attributeText, Encoding.UTF8), options));
 
             // get the newly bound attribute, and INotifyPropertyChanged
-            INamedTypeSymbol attributeSymbol = compilation.GetTypeByMetadataName("DifferentContentDifferentName.DifferentContentDifferentNameAttribute");
+            INamedTypeSymbol attributeSymbol = compilation.GetTypeByMetadataName("LogInFile.LogInFileAttribute");
             INamedTypeSymbol notifySymbol = compilation.GetTypeByMetadataName("System.ComponentModel.INotifyPropertyChanged");
 
             // loop over the candidate fields, and keep the ones that are actually annotated
@@ -74,10 +82,14 @@ namespace DifferentContentDifferentName
             {
                 string classSource = ProcessClass(group.Key, group.ToList(), attributeSymbol, notifySymbol, context);
 
+                //context.AddSource($"{group.Key.Name}_LogInFile_{DateTime.Now:hh_mm_ss}.cs", SourceText.From(classSource, Encoding.ASCII));
+                string path = @"C:\ToRemove\Generators\Log.txt";
 
-                Thread.Sleep(10000);
+                using (StreamWriter w = File.AppendText(path))
+                {
+                    w.WriteLine($"{DateTime.Now:hh_mm_ss}");
+                }
 
-                context.AddSource($"{group.Key.Name}_DifferentContentDifferentName_{DateTime.Now:hh_mm_ss}.cs", SourceText.From(classSource, Encoding.ASCII));
                 //context.AddSource("AutoNotifyAttributeNew", SourceText.From(attributeTex2t, Encoding.UTF8));
             }
         }
