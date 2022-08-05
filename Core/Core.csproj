@@ -6,8 +6,16 @@
   </PropertyGroup>
 
 	<ItemGroup>
+		<AdditionalFiles Include="People.csv" CsvLoadType="Startup" />
+		<AdditionalFiles Include="Cars.csv" CsvLoadType="OnDemand" CacheObjects="true" />
+  </ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\Generator\Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 		<ProjectReference Include="..\ReferenceMe_3\ReferenceMe_3.csproj" />
 	</ItemGroup>
+
+	<!-- Manually reference the generator props because we locally reference the generator. When added via NuGet this happens automatically -->
+	<Import Project="..\Generator\SameContentSameNameDependsOnExternalFile.props" />
 
 </Project>
