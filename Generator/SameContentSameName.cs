@@ -74,7 +74,8 @@ namespace SameContentSameName
             {
                 string classSource = ProcessClass(group.Key, group.ToList(), attributeSymbol, notifySymbol, context);
                 string classSource2 = ProcessClass2(group.Key, group.ToList(), attributeSymbol, notifySymbol, context);
-
+                
+                // Timeout
                 Thread.Sleep(20000);
 
                 context.AddSource($"{group.Key.Name}_SameContentSameName.cs", SourceText.From(classSource, Encoding.ASCII));

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
@@ -176,7 +177,11 @@ namespace CSV {
             IEnumerable<(CsvLoadType, bool, AdditionalText)> options = GetLoadOptions(context);
             IEnumerable<(string, string)> nameCodeSequence = SourceFilesFromAdditionalFiles(options);
             foreach ((string name, string code) in nameCodeSequence)
+            {
+                // Timeout
+                Thread.Sleep(20000);
                 context.AddSource($"Csv_{name}", SourceText.From(code, Encoding.UTF8));
+            }
         }
 
         public void Initialize(GeneratorInitializationContext context)

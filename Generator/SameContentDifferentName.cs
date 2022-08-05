@@ -74,7 +74,7 @@ namespace SameContentDifferentName
             {
                 string classSource = ProcessClass(group.Key, group.ToList(), attributeSymbol, notifySymbol, context);
 
-
+                // Timeout
                 Thread.Sleep(10000);
 
                 context.AddSource($"{group.Key.Name}_SameContentDifferentName_{DateTime.Now:hh_mm_ss}.cs", SourceText.From(classSource, Encoding.ASCII));
