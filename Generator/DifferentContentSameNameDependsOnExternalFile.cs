@@ -74,7 +74,8 @@ namespace DifferentContentSameNameDependsOnExternalFile {
 
             //// Class Definition
             // DateTime.Now:hh_mm_ss is used to make the content different.
-            sb.Append($"    public class {className}_{DateTime.Now:hh_mm_ss} {{\n");
+            sb.Append($" /*{DateTime.Now:hh_mm_ss}*/\n");
+            sb.Append($"    public class {className} {{\n");
 
 
             if (loadTime == CsvLoadType.Startup)

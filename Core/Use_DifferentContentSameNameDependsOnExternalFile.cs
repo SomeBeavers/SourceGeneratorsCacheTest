@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using static System.Console;
-using SameContentSameNameDependsOnExternalFile;
+using DifferentContentSameNameDependsOnExternalFile;
 
 namespace GeneratedDemo
 {
-    class Use_SameContentSameNameDependsOnExternalFile
+    class Use_DifferentContentSameNameDependsOnExternalFile
     {
         public static void Run()
         {
