@@ -73,14 +73,128 @@ namespace SameContentDifferentName
             foreach (IGrouping<INamedTypeSymbol, IFieldSymbol> group in fieldSymbols.GroupBy(f => f.ContainingType))
             {
                 string classSource = ProcessClass(group.Key, group.ToList(), attributeSymbol, notifySymbol, context);
+                string classSource2 = ProcessClass2(group.Key, group.ToList(), attributeSymbol, notifySymbol, context);
 
                 // Timeout
-                Thread.Sleep(10000);
+                Thread.Sleep(20000);
 
                 context.AddSource($"{group.Key.Name}_SameContentDifferentName_{DateTime.Now:hh_mm_ss}.cs", SourceText.From(classSource, Encoding.ASCII));
+                context.AddSource($"{group.Key.Name}_SameContentDifferentName_Big_{DateTime.Now:hh_mm_ss}.cs", SourceText.From(classSource2, Encoding.ASCII));
                 //context.AddSource("AutoNotifyAttributeNew", SourceText.From(attributeTex2t, Encoding.UTF8));
             }
         }
+
+                        private string ProcessClass2(INamedTypeSymbol classSymbol, List<IFieldSymbol> fields, ISymbol attributeSymbol, ISymbol notifySymbol, GeneratorExecutionContext context)
+        {
+            if (!classSymbol.ContainingSymbol.Equals(classSymbol.ContainingNamespace, SymbolEqualityComparer.Default))
+            {
+                return null; //TODO: issue a diagnostic that it must be top level
+            }
+
+            string namespaceName = classSymbol.ContainingNamespace.ToDisplayString();
+
+            // begin building the generated source
+            StringBuilder source = new StringBuilder($@"
+namespace {namespaceName}
+{{
+    public partial class {classSymbol.Name} : {notifySymbol.ToDisplayString()}
+    {{
+");
+
+            //// if the class doesn't implement INotifyPropertyChanged already, add it
+            //if (!classSymbol.Interfaces.Contains(notifySymbol))
+            //{
+            //    source.Append("public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;");
+            //    source.Append("public int fakeField;");
+            //}
+
+            for (int i = 0; i < 1000; i++)
+            {
+                source.Append($"public int fakeField{i};");
+                source.Append($@"
+public int FakeField{i}Prop
+{{
+    get 
+    {{
+        return this.fakeField{i};
+        int fakeField1{i} = 1;
+    }}
+
+    set
+    {{
+        this.fakeField{i} = value;
+        this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(nameof(FakeField{i}Prop)));
+    }}
+}}
+
+");
+            }
+
+            // create properties for each field 
+            foreach (IFieldSymbol fieldSymbol in fields)
+            {
+                ProcessField(source, fieldSymbol, attributeSymbol);
+            }
+
+            source.Append("} }");
+            return source.ToString();
+        }
+
+        private void ProcessField(StringBuilder source, IFieldSymbol fieldSymbol, ISymbol attributeSymbol)
+        {
+            // get the name and type of the field
+            string fieldName = fieldSymbol.Name;
+            ITypeSymbol fieldType = fieldSymbol.Type;
+
+            // get the AutoNotify attribute from the field, and any associated data
+            AttributeData attributeData = fieldSymbol.GetAttributes().Single(ad => ad.AttributeClass.Equals(attributeSymbol, SymbolEqualityComparer.Default));
+            TypedConstant overridenNameOpt = attributeData.NamedArguments.SingleOrDefault(kvp => kvp.Key == "PropertyName").Value;
+
+            string propertyName = chooseName(fieldName, overridenNameOpt);
+            if (propertyName.Length == 0 || propertyName == fieldName)
+            {
+                //TODO: issue a diagnostic that we can't process this field
+                return;
+            }
+
+            source.Append($@"
+public {fieldType} {propertyName} 
+{{
+    get 
+    {{
+        return this.{fieldName};
+        int {fieldName}1 = 1;
+    }}
+
+    set
+    {{
+        this.{fieldName} = value;
+        this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(nameof({propertyName})));
+    }}
+}}
+
+");
+
+            string chooseName(string fieldName, TypedConstant overridenNameOpt)
+            {
+                if (!overridenNameOpt.IsNull)
+                {
+                    return overridenNameOpt.Value.ToString();
+                }
+
+                fieldName = fieldName.TrimStart('_');
+                if (fieldName.Length == 0)
+                    return string.Empty;
+
+                if (fieldName.Length == 1)
+                    return fieldName.ToUpper();
+
+                return fieldName.Substring(0, 1).ToUpper() + fieldName.Substring(1);
+            }
+
+        }
+
+
 
         private string ProcessClass(INamedTypeSymbol classSymbol, List<IFieldSymbol> fields, ISymbol attributeSymbol, ISymbol notifySymbol, GeneratorExecutionContext context)
         {
