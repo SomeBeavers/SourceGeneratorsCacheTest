@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using static System.Console;
-using SameContentSameNameDependsOnExternalFile;
+using SameContentDifferentNameDependsOnExternalFile;
 
 namespace GeneratedDemo
 {
-    class UseCsvGenerator
+    class Use_SameContentDifferentNameDependsOnExternalFile
     {
         public static void Run()
         {

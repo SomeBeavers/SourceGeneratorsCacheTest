@@ -17,7 +17,7 @@ using NotVisualBasic.FileIO;
 namespace CsvGenerator
 {
     [Generator]
-    public class SameContentSameNameDependsOnExternalFile : ISourceGenerator
+    public class SameContentDifferentNameDependsOnExternalFile : ISourceGenerator
     {
         public enum CsvLoadType
         {
@@ -67,7 +67,7 @@ namespace CsvGenerator
             //// Usings
             sb.Append(@"
 #nullable enable
-namespace SameContentSameNameDependsOnExternalFile {
+namespace SameContentDifferentNameDependsOnExternalFile {
     using System.Collections.Generic;
 
 ");
@@ -180,7 +180,7 @@ namespace SameContentSameNameDependsOnExternalFile {
             {
                 // Timeout
                 Thread.Sleep(20000);
-                context.AddSource($"SameContentSameNameDependsOnExternalFile_{name}", SourceText.From(code, Encoding.UTF8));
+                context.AddSource($"Csv_{name}_{DateTime.Now:hh_mm_ss}", SourceText.From(code, Encoding.UTF8));
             }
         }
 

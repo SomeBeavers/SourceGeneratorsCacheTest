@@ -130,69 +130,69 @@ public int FakeField{i}Prop
 ");
             }
 
-            // create properties for each field 
-            foreach (IFieldSymbol fieldSymbol in fields)
-            {
-                ProcessField(source, fieldSymbol, attributeSymbol);
-            }
+            //// create properties for each field 
+            //foreach (IFieldSymbol fieldSymbol in fields)
+            //{
+            //    ProcessField(source, fieldSymbol, attributeSymbol);
+            //}
 
             source.Append("} }");
             return source.ToString();
         }
 
-        private void ProcessField(StringBuilder source, IFieldSymbol fieldSymbol, ISymbol attributeSymbol)
-        {
-            // get the name and type of the field
-            string fieldName = fieldSymbol.Name;
-            ITypeSymbol fieldType = fieldSymbol.Type;
+//        private void ProcessField(StringBuilder source, IFieldSymbol fieldSymbol, ISymbol attributeSymbol)
+//        {
+//            // get the name and type of the field
+//            string fieldName = fieldSymbol.Name;
+//            ITypeSymbol fieldType = fieldSymbol.Type;
 
-            // get the AutoNotify attribute from the field, and any associated data
-            AttributeData attributeData = fieldSymbol.GetAttributes().Single(ad => ad.AttributeClass.Equals(attributeSymbol, SymbolEqualityComparer.Default));
-            TypedConstant overridenNameOpt = attributeData.NamedArguments.SingleOrDefault(kvp => kvp.Key == "PropertyName").Value;
+//            // get the AutoNotify attribute from the field, and any associated data
+//            AttributeData attributeData = fieldSymbol.GetAttributes().Single(ad => ad.AttributeClass.Equals(attributeSymbol, SymbolEqualityComparer.Default));
+//            TypedConstant overridenNameOpt = attributeData.NamedArguments.SingleOrDefault(kvp => kvp.Key == "PropertyName").Value;
 
-            string propertyName = chooseName(fieldName, overridenNameOpt);
-            if (propertyName.Length == 0 || propertyName == fieldName)
-            {
-                //TODO: issue a diagnostic that we can't process this field
-                return;
-            }
+//            string propertyName = chooseName(fieldName, overridenNameOpt);
+//            if (propertyName.Length == 0 || propertyName == fieldName)
+//            {
+//                //TODO: issue a diagnostic that we can't process this field
+//                return;
+//            }
 
-            source.Append($@"
-public {fieldType} {propertyName} 
-{{
-    get 
-    {{
-        return this.{fieldName};
-        int {fieldName}1 = 1;
-    }}
+//            source.Append($@"
+//public {fieldType} {propertyName} 
+//{{
+//    get 
+//    {{
+//        return this.{fieldName};
+//        int {fieldName}1 = 1;
+//    }}
 
-    set
-    {{
-        this.{fieldName} = value;
-        this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(nameof({propertyName})));
-    }}
-}}
+//    set
+//    {{
+//        this.{fieldName} = value;
+//        this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(nameof({propertyName})));
+//    }}
+//}}
 
-");
+//");
 
-            string chooseName(string fieldName, TypedConstant overridenNameOpt)
-            {
-                if (!overridenNameOpt.IsNull)
-                {
-                    return overridenNameOpt.Value.ToString();
-                }
+//            string chooseName(string fieldName, TypedConstant overridenNameOpt)
+//            {
+//                if (!overridenNameOpt.IsNull)
+//                {
+//                    return overridenNameOpt.Value.ToString();
+//                }
 
-                fieldName = fieldName.TrimStart('_');
-                if (fieldName.Length == 0)
-                    return string.Empty;
+//                fieldName = fieldName.TrimStart('_');
+//                if (fieldName.Length == 0)
+//                    return string.Empty;
 
-                if (fieldName.Length == 1)
-                    return fieldName.ToUpper();
+//                if (fieldName.Length == 1)
+//                    return fieldName.ToUpper();
 
-                return fieldName.Substring(0, 1).ToUpper() + fieldName.Substring(1);
-            }
+//                return fieldName.Substring(0, 1).ToUpper() + fieldName.Substring(1);
+//            }
 
-        }
+//        }
 
 
         private string ProcessClass(INamedTypeSymbol classSymbol, List<IFieldSymbol> fields, ISymbol attributeSymbol, ISymbol notifySymbol, GeneratorExecutionContext context)
